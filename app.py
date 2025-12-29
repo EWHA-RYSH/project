@@ -284,47 +284,29 @@ with tab4:
 
         level, badge_class = performance_level(percent)
         with right:
-            st.markdown(f"""
-<div style="
-background:#ffffff;
-padding:28px;
-border-radius:20px;
-border:1px solid #e5e7eb;
-box-shadow:0 12px 30px rgba(0,0,0,0.08);
-">
+            st.markdown("### 🔮 예측 결과")
 
-<h2>예측 결과</h2>
+            st.write(f"**예측 이미지 유형:** Type {img_type}")
+            st.write(f"**예측 log-eng score:** {pred_logeng:.4f}")
 
-<h3>이미지 유형 · Type {img_type}</h3>
+            if ecdf is None:
+                st.warning("기준 데이터가 부족하여 상대 성과를 계산할 수 없습니다.")
+            else:
+                st.metric(
+                    label="상대 성과 위치 (ECDF)",
+                    value=f"{ecdf:.1f}%",
+                    help="동일 국가·유형 콘텐츠 중 해당 이미지보다 성과가 낮은 비율"
+                )
 
-<span class="{badge_class}">{level}</span>
+                st.write(
+                    f"👉 동일 국가·유형 콘텐츠 중 "
+                    f"**약 {ecdf:.1f}%보다 높은 성과**가 예측됩니다."
+                )
 
-<p style="margin-top:10px; color:#6b7280;">
-동일 국가·유형 콘텐츠 대비 상대적 성과 수준
-</p>
+                st.markdown(f"### {top10_badge(ecdf)}")
 
-<h1 style="margin-top:20px;">{percent:.1f}%</h1>
-
-<hr>
-
-<h4>🧠 AI 해석</h4>
-
-<p>
-<b>{country} 시장 기준</b>, 이 이미지는<br>
-<b>{TYPE_DESC[img_type]}</b> 유형으로 분류되었습니다.
-</p>
-
-<p>
-과거 유사 콘텐츠의 반응 패턴을 고려할 때,<br>
-이 유형은 <b>{level}</b> 수준의 성과 경향을 보일 가능성이 있습니다.
-</p>
-
-<p style="font-size:12px; color:#6b7280;">
-※ 절대적인 수치 예측이 아닌, 상대적 위치 기반 지표입니다.
-</p>
-
-</div>
-""", unsafe_allow_html=True)
-
+                st.caption(
+                    "※ 본 지표는 경험적 분포(ECDF)를 기반으로 한 상대 성과 평가입니다."
+                )
     else:
         st.info("⬅️ 이미지를 업로드하면 예측 결과가 표시됩니다.")
