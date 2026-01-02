@@ -22,6 +22,7 @@ from components.layout import (
     render_image_type_guide,
     section_gap
 )
+from components.style import segmented_radio_style
 
 def render():
     df_meta = load_meta_df()
@@ -105,19 +106,35 @@ def render():
             subtext="성과 일관성"
         )
     
-    section_gap(48)
+    section_gap(32)
     
-    st.markdown(
-        """
-        <div class="section">
-            <h4 class="section-title">고성과 달성 가능성</h4>
-            <div class="section-desc">각 이미지 유형이 상위 10% 성과를 달성할 확률과 상위 성과 내에서의 집중도를 확인하여, 고성과 달성 가능성이 높은 콘텐츠 유형을 파악합니다.</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    # 중분류 선택 (세그먼트 탭 스타일)
+    segmented_radio_style()
+    view = st.radio(
+        "중분류",
+        ["성과 요약", "지표별 비교"],
+        horizontal=True,
+        key="tab2_view"
     )
-    section_gap(16)
-    prob_10, conc_10, threshold_10 = get_top_percentile_metrics(df_country, 10)
+    
+    section_gap(24)
+    
+    type_count, type_ratio = get_image_type_distribution(df_country)
+    
+    # 조건부 렌더링: 성과 요약
+    if view == "성과 요약":
+        prob_10, conc_10, threshold_10 = get_top_percentile_metrics(df_country, 10)
+        
+        st.markdown(
+            """
+            <div class="section">
+                <h4 class="section-title">고성과 달성 가능성</h4>
+                <div class="section-desc">각 이미지 유형이 상위 10% 성과를 달성할 확률과 상위 성과 내에서의 집중도를 확인하여, 고성과 달성 가능성이 높은 콘텐츠 유형을 파악합니다.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        section_gap(16)
     
     if len(prob_10) > 0:
         best_prob_type = prob_10.loc[prob_10["p_top10"].idxmax(), "img_type"]
@@ -185,63 +202,79 @@ def render():
                 )
             else:
                 st.info("Top 10% 성과 데이터가 없습니다.")
+        
+        section_gap(48)
+        
+        # Action Items (성과 요약에 포함)
+        actions = []
+        
+        if kpis['underused_opportunity']['type']:
+            underused_type_name = get_type_name(kpis['underused_opportunity']['type'])
+            actions.append({
+                "action": f"{underused_type_name} (Type {kpis['underused_opportunity']['type']}) 활용도 증가",
+                "reason": f"높은 참여율({format_engagement_rate(kpis['underused_opportunity']['engagement'])})을 보이지만 현재 활용도가 {format_percentage(kpis['underused_opportunity']['usage'])}로 낮습니다."
+            })
+        
+        from utils.eda_metrics import get_usage_vs_performance
+        _, _, overused = get_usage_vs_performance(df_country, 10)
+        
+        if len(overused) > 0:
+            overused_type = int(overused.iloc[0]["img_type"])
+            overused_type_name = get_type_name(overused_type)
+            overused_usage = overused.iloc[0]["usage_share"] * 100
+            overused_eng = overused.iloc[0]["eng_mean"]
+            actions.append({
+                "action": f"{overused_type_name} (Type {overused_type}) 활용도 감소",
+                "reason": f"활용도는 높지만({format_percentage(overused_usage)}) 참여율이 낮습니다({format_engagement_rate(overused_eng)}). 더 높은 성과를 보이는 타입으로 재배분을 고려하세요."
+            })
+        
+        type_counts = type_count.to_dict()
+        low_sample_types = [t for t, count in type_counts.items() if count < 10]
+        if low_sample_types:
+            actions.append({
+                "action": "주의사항",
+                "reason": f"Type {', '.join(map(str, low_sample_types))}는 샘플 크기가 작아(<10개 게시글) 결과의 신뢰성이 낮을 수 있습니다."
+            })
+        
+        if actions:
+            render_action_items(actions)
+        
+        # TODO: 추후 tab2.json 인사이트 주입 가능하도록 구조 분리
+        # country_insight = insights.get(selected_country, {})
+        # summary_bullets = country_insight.get("performance_summary", {}).get("bullets", [])
+        # if summary_bullets:
+        #     section_gap(24)
+        #     render_insight_bullets(summary_bullets, title="국가별 인사이트")
+    
+    # 조건부 렌더링: 지표별 비교
+    elif view == "지표별 비교":
+        perf_summary = get_performance_summary(df_country)
+        
+        st.markdown(
+            """
+            <div class="section">
+                <h4 class="section-title">활용도 vs 참여율</h4>
+                <div class="section-desc">활용 빈도와 참여율을 함께 비교하여, 과소 활용되었지만 성과가 높은 콘텐츠 유형을 탐색합니다.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        section_gap(16)
+        plot_usage_vs_engagement(
+            type_ratio,
+            perf_summary,
+            selected_country,
+            highlight_type=kpis['best_engagement']['type']
+        )
+        
+        # TODO: 추후 tab2.json 인사이트 주입 가능하도록 구조 분리
+        # country_insight = insights.get(selected_country, {})
+        # comparison_bullets = country_insight.get("metric_comparison", {}).get("bullets", [])
+        # if comparison_bullets:
+        #     section_gap(24)
+        #     render_insight_bullets(comparison_bullets, title="국가별 인사이트")
     
     section_gap(48)
-    
-    type_count, type_ratio = get_image_type_distribution(df_country)
-    perf_summary = get_performance_summary(df_country)
-    
-    st.markdown(
-        """
-        <div class="section">
-            <h4 class="section-title">활용도 vs 참여율</h4>
-            <div class="section-desc">활용 빈도와 참여율을 함께 비교하여, 과소 활용되었지만 성과가 높은 콘텐츠 유형을 탐색합니다.</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    section_gap(16)
-    plot_usage_vs_engagement(
-        type_ratio,
-        perf_summary,
-        selected_country,
-        highlight_type=kpis['best_engagement']['type']
-    )
-    
-    section_gap(48)
-    
-    actions = []
-    
-    if kpis['underused_opportunity']['type']:
-        underused_type_name = get_type_name(kpis['underused_opportunity']['type'])
-        actions.append({
-            "action": f"{underused_type_name} (Type {kpis['underused_opportunity']['type']}) 활용도 증가",
-            "reason": f"높은 참여율({format_engagement_rate(kpis['underused_opportunity']['engagement'])})을 보이지만 현재 활용도가 {format_percentage(kpis['underused_opportunity']['usage'])}로 낮습니다."
-        })
-    
-    from utils.eda_metrics import get_usage_vs_performance
-    _, _, overused = get_usage_vs_performance(df_country, 10)
-    
-    if len(overused) > 0:
-        overused_type = int(overused.iloc[0]["img_type"])
-        overused_type_name = get_type_name(overused_type)
-        overused_usage = overused.iloc[0]["usage_share"] * 100
-        overused_eng = overused.iloc[0]["eng_mean"]
-        actions.append({
-            "action": f"{overused_type_name} (Type {overused_type}) 활용도 감소",
-            "reason": f"활용도는 높지만({format_percentage(overused_usage)}) 참여율이 낮습니다({format_engagement_rate(overused_eng)}). 더 높은 성과를 보이는 타입으로 재배분을 고려하세요."
-        })
-    
-    type_counts = type_count.to_dict()
-    low_sample_types = [t for t, count in type_counts.items() if count < 10]
-    if low_sample_types:
-        actions.append({
-            "action": "주의사항",
-            "reason": f"Type {', '.join(map(str, low_sample_types))}는 샘플 크기가 작아(<10개 게시글) 결과의 신뢰성이 낮을 수 있습니다."
-        })
-    
-    if actions:
-        render_action_items(actions)
     
     with st.expander("상세 통계 보기", expanded=False):
         st.markdown("##### 이미지 유형별 평균 성과")

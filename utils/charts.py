@@ -55,7 +55,7 @@ def apply_chart_style(fig, highlight_type=None):
         title=dict(
             x=0.5,
             xanchor="center",
-            font=dict(size=15, color="#111827", family="Arita-Dotum-Medium, sans-serif")
+            font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif", weight=600)
         ),
         xaxis=dict(
             showgrid=True,

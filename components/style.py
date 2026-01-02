@@ -818,6 +818,71 @@ def inject_style():
         unsafe_allow_html=True
     )
 
+def segmented_radio_style():
+    """라디오를 세그먼트 탭처럼 보이게 하는 스타일"""
+    st.markdown("""
+    <style>
+    /* 세그먼트 탭 스타일 - 라디오를 버튼처럼 보이게 */
+    div[data-testid="stRadio"] > div {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    div[data-testid="stRadio"] > div > label {
+        background: #F5F7FA !important;
+        padding: 8px 20px !important;
+        border-radius: 999px !important;
+        border: 1px solid #E0E4EA !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        color: #5B6472 !important;
+        font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
+        transition: all 0.2s ease !important;
+        margin: 0 !important;
+        flex: 0 0 auto !important;
+    }
+    
+    div[data-testid="stRadio"] > div > label:hover {
+        background: #E5E7EB !important;
+        border-color: #D1D5DB !important;
+    }
+    
+    div[data-testid="stRadio"] > div > label[data-testid*="selected"] {
+        background: #1F5795 !important;
+        color: #FFFFFF !important;
+        border-color: #1F5795 !important;
+        font-weight: 600 !important;
+        font-family: 'Arita-Dotum-Bold', 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
+    }
+    
+    div[data-testid="stRadio"] > div > label > div[data-baseweb="radio"] {
+        display: none !important;
+    }
+    
+    div[data-testid="stRadio"] > div > label > div:first-child {
+        display: none !important;
+    }
+    
+    div[data-testid="stRadio"] > div > label > span {
+        margin-left: 0 !important;
+    }
+    
+    /* 라디오 라벨 텍스트 스타일 */
+    div[data-testid="stRadio"] label {
+        text-align: center !important;
+    }
+    
+    /* 중분류 라벨 스타일 */
+    div[data-testid="stRadio"] > label {
+        font-size: 12px !important;
+        color: #6B7280 !important;
+        margin-bottom: 8px !important;
+        font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 def apply_custom_style():
     """전역 스타일 적용"""
     inject_style()

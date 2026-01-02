@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+from typing import Optional
 from utils.charts import get_country_name
 
 TYPE_DESC = {
@@ -103,6 +104,49 @@ def render_insight_box(bullets):
         """,
         unsafe_allow_html=True
     )
+
+def render_insight_bullets(bullets: list[str], title: Optional[str] = None):
+    """
+    인사이트 불릿 리스트를 렌더링합니다.
+    
+    Args:
+        bullets: 인사이트 불릿 리스트 (HTML 포함 가능)
+        title: 선택적 제목 (없으면 제목 없이 렌더링)
+    """
+    if not bullets or len(bullets) == 0:
+        return
+    
+    # bullets를 위계에 따라 HTML로 변환
+    bullets_html = ""
+    for bullet in bullets:
+        # 🧠로 시작: 보조 설명 톤
+        if bullet.strip().startswith("🧠"):
+            bullets_html += f'<div style="margin-bottom: 10px; font-family: Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important; color: #111827; font-size: 14px; line-height: 1.6;">{bullet}</div>'
+        # 📍로 시작: 결론
+        elif bullet.strip().startswith("📍"):
+            bullets_html += f'<div style="margin-bottom: 12px; font-family: Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important; color: #111827; font-size: 14px; line-height: 1.6;">{bullet}</div>'
+        # 기타: 기본 스타일
+        else:
+            bullets_html += f'<div style="margin-bottom: 8px; font-family: Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important; color: #374151; font-size: 14px; line-height: 1.6;">{bullet}</div>'
+    
+    title_html = ""
+    if title:
+        title_html = f'<div style="font-size: 18px; font-weight: 700; color: #1F2937; margin-bottom: 16px; font-family: Arita-Dotum-Bold, Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important;">{title}</div>'
+    
+    # HTML 구성 (왼쪽 라인: 연한 회색, 두께 2px)
+    html_content = f'''<div style="background-color: #FFFFFF; border: 1px solid #E5E7EB; border-left: 2px solid #D1D5DB; border-radius: 4px; padding: 20px 24px; margin: 20px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-family: Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important;">
+{title_html}
+<div style="margin: 0; font-family: Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif !important;">
+{bullets_html}
+</div>
+</div>'''
+    
+    # st.html 사용 (Streamlit 1.28.0+)
+    try:
+        st.html(html_content)
+    except AttributeError:
+        # st.html이 없는 경우 st.markdown 사용
+        st.markdown(html_content, unsafe_allow_html=True)
 
 def render_action_items(items):
     items_html = "".join([
