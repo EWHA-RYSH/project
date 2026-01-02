@@ -148,15 +148,6 @@ def render():
     section_gap(48)
     
     with st.expander("상세 통계 보기", expanded=False):
-        st.markdown(
-            """
-            <div style="{get_text_style('base', 'tertiary')} line-height: 1.6; margin-bottom: {SPACING['xl']};">
-                타입별 기본 통계를 요약합니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
         summary_df = pd.DataFrame({
             "이미지 타입": type_count.index,
             "개수": type_count.values,

@@ -93,7 +93,7 @@ def inject_style():
             font-family: 'Arita-Sans-Medium', sans-serif !important;
         }}
         
-        /* KPI 카드 전용 폰트 - 클래스 기반 */
+        /* KPI 카드 전용 폰트 */
         .kpi-card-wrapper,
         .kpi-card-wrapper * {{
             font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Arita-Dotum-Medium', 'Malgun Gothic', sans-serif !important;
@@ -103,10 +103,8 @@ def inject_style():
             font-family: 'Arita-Dotum-Bold', 'Arita-dotum-Bold', 'Arita-Dotum-Bold', 'Malgun Gothic', sans-serif !important;
         }}
         
-        /* KPI 카드 전용 폰트 - 전역 스타일보다 우선순위 높게 */
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"],
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] div,
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] span {{
+        /* KPI 카드 스타일 - 인라인 스타일로 생성된 카드에도 적용 */
+        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] {{
             font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Arita-Dotum-Medium', 'Malgun Gothic', sans-serif !important;
         }}
         
@@ -154,30 +152,13 @@ def inject_style():
             font-weight: 700 !important;
         }}
         
-        .kpi-card, .kpi-card *, [class*="insight"], [class*="action"] {{
+        /* 인사이트/액션 박스 폰트 */
+        [class*="insight"], [class*="action"] {{
             font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
         }}
         
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] * {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
+        /* 인사이트 박스 스타일 */
         div[data-testid="stMarkdownContainer"] div[style*="background-color: #F9FAFB"][style*="border-left: 4px solid"] {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #F9FAFB"][style*="border-left: 4px solid"] * {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
-        /* KPI 카드 내부 모든 텍스트에 Arita Dotum 적용 - 더 강력한 선택자 */
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"][style*="border-radius: 8px"],
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"][style*="border-radius: 8px"] *,
-        div[data-testid="stMarkdownContainer"] div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"][style*="padding: 20px"] * {{
             font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
         }}
         
@@ -238,51 +219,6 @@ def inject_style():
             background-color: {BRAND_COLORS['bg']};
         }}
 
-        div[data-testid="metric-container"] {{
-            background-color: {BRAND_COLORS['white']};
-            border: 1px solid #E5E7EB;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }}
-        
-        .kpi-card {{
-            background-color: {BRAND_COLORS['white']};
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            margin-bottom: 16px;
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
-        .kpi-card * {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        }}
-        
-        .kpi-card.highlight {{
-            border-left: 4px solid {BRAND_COLORS['primary']};
-        }}
-        
-        /* KPI 카드 스타일이 적용된 div 내부 모든 요소 - 최대한 강력한 선택자 */
-        div[data-testid="stMarkdownContainer"] > div > div[style*="background-color: #FFFFFF"],
-        div[data-testid="stMarkdownContainer"] > div > div[style*="background-color: #FFFFFF"] *,
-        div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"],
-        div[style*="background-color: #FFFFFF"][style*="border: 1px solid #E5E7EB"] *,
-        div[style*="background-color: #FFFFFF"][style*="border-radius: 8px"],
-        div[style*="background-color: #FFFFFF"][style*="border-radius: 8px"] *,
-        div[style*="background-color: #FFFFFF"][style*="padding: 20px"],
-        div[style*="background-color: #FFFFFF"][style*="padding: 20px"] * {{
-            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Arita-Dotum-Medium', 'Malgun Gothic', sans-serif !important;
-        }}
-        
-        /* Bold 텍스트는 Bold 폰트 사용 */
-        div[style*="background-color: #FFFFFF"] div[style*="font-weight: 700"],
-        div[style*="background-color: #FFFFFF"] div[style*="font-weight: 600"],
-        div[style*="background-color: #FFFFFF"] div[style*="font-weight: 700"] *,
-        div[style*="background-color: #FFFFFF"] div[style*="font-weight: 600"] * {{
-            font-family: 'Arita-Dotum-Bold', 'Arita-dotum-Bold', 'Arita-Dotum-Bold', 'Malgun Gothic', sans-serif !important;
-        }}
         
         .stPlotlyChart {{
             background-color: {BRAND_COLORS['white']};
@@ -468,34 +404,6 @@ def inject_style():
             letter-spacing: -0.5px;
             margin-top: 0;
         }}
-        
-        .result-card {{
-            background: {BRAND_COLORS['white']};
-            padding: 28px;
-            border-radius: 12px;
-            border: 1px solid #E5E7EB;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            font-family: 'Arita-Sans-Medium', 'Arita-Dotum-Medium', sans-serif;
-        }}
-
-        .badge-high, .badge-mid, .badge-low {{
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 14px;
-        }}
-
-        .badge-high {{ background: #dcfce7; color: #166534; }}
-        .badge-mid  {{ background: #fef9c3; color: #854d0e; }}
-        .badge-low  {{ background: #fee2e2; color: #991b1b; }}
-
-        .muted {{ color: #6b7280; }}
-        .hr {{ border: none; height: 1px; background: #E5E7EB; margin: 18px 0; }}
-        .h1 {{ font-size: 40px; margin: 8px 0 6px; font-weight: 800; }}
-        .h2 {{ font-size: 26px; margin: 0 0 6px; font-weight: 800; }}
-        .h4 {{ font-size: 16px; margin: 0 0 6px; font-weight: 800; }}
-        .small {{ color: #6b7280; font-size: 13px; line-height: 1.45; }}
 
         .main .block-container {{
             padding-top: 2rem;
@@ -532,61 +440,6 @@ def inject_style():
             fill: #1F2937 !important;
         }}
 
-        
-        /* 이미지 타입 가이드 스타일 */
-        .ap-row {{
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            padding: 10px 8px;
-            border-radius: 12px;
-            transition: background-color 0.2s;
-        }}
-        
-        .ap-row:hover {{
-            background: rgba(31,87,149,0.06);
-        }}
-        
-        .ap-row b {{
-            color: #111827;
-        }}
-        
-        .ap-k {{
-            width: 92px;
-            flex: 0 0 92px;
-        }}
-        
-        .ap-v {{
-            flex: 1;
-        }}
-        
-        .ap-chip {{
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            background: rgba(31,87,149,0.10);
-            color: #1F5795;
-            border: 1px solid rgba(31,87,149,0.18);
-        }}
-        
-        .ap-small {{
-            font-size: 0.88rem;
-            color: #6B7280;
-            margin-top: 2px;
-        }}
-        
-        .ap-divider {{
-            height: 1px;
-            background: rgba(0,0,0,0.06);
-            margin: 10px 0 12px 0;
-        }}
-        
-        .ap-muted {{
-            color: #6B7280;
-            font-size: 0.9rem;
-        }}
 
         div[data-baseweb="select"] > div {{
             border-radius: 8px !important;
@@ -711,23 +564,6 @@ def inject_style():
             font-weight: 400 !important;
         }}
         
-        .card {{
-            padding: 18px;
-            border: 1px solid #E5E7EB;
-            border-radius: 14px;
-            background: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            margin-bottom: 24px;
-        }}
-        
-        .type-guide-intro {{
-            font-size: 14px;
-            color: #4B5563;
-            margin-bottom: 24px;
-            line-height: 1.6;
-            font-family: 'Arita-Dotum-Medium', sans-serif !important;
-        }}
-        
         .type-grid {{
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -814,114 +650,62 @@ def inject_style():
             }}
         }}
         
-        /* 탭 스타일 - primary 색상으로 변경 */
-        button[data-baseweb="tab"],
+        /* ============================================
+           탭 스타일 - 처음부터 primary 색상으로 설정
+           ============================================ */
+        
+        /* 탭 버튼 기본 스타일 - 선택되지 않은 탭은 연한 회색 */
         .stTabs button[data-baseweb="tab"],
-        div[data-baseweb="tab-list"] button {{
-            color: #6B7280 !important;
+        [data-baseweb="tab-list"] button {{
+            color: #9CA3AF !important;
             font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
             font-size: 14px !important;
             padding: 12px 20px !important;
+            border: none !important;
             border-bottom: 2px solid transparent !important;
+            background: transparent !important;
             transition: all 0.2s ease !important;
         }}
         
-        button[data-baseweb="tab"]:hover,
+        /* 탭 호버 효과 */
         .stTabs button[data-baseweb="tab"]:hover,
-        div[data-baseweb="tab-list"] button:hover {{
+        [data-baseweb="tab-list"] button:hover {{
             color: {BRAND_COLORS['primary']} !important;
             background-color: rgba(31, 87, 149, 0.05) !important;
         }}
         
-        button[data-baseweb="tab"][aria-selected="true"],
+        /* 선택된 탭 - primary 색상 */
         .stTabs button[data-baseweb="tab"][aria-selected="true"],
-        div[data-baseweb="tab-list"] button[aria-selected="true"] {{
+        [data-baseweb="tab-list"] button[aria-selected="true"] {{
             color: {BRAND_COLORS['primary']} !important;
-            border-bottom-color: {BRAND_COLORS['primary']} !important;
+            border-bottom: 2px solid {BRAND_COLORS['primary']} !important;
             font-weight: 600 !important;
             font-family: 'Arita-Dotum-Bold', 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
         }}
         
-        /* 탭 인디케이터 바 색상 변경 */
-        div[data-baseweb="tab-list"]::after,
-        .stTabs div[data-baseweb="tab-list"]::after {{
-            background-color: {BRAND_COLORS['primary']} !important;
+        /* 선택되지 않은 탭 - 연한 회색 */
+        .stTabs button[data-baseweb="tab"][aria-selected="false"],
+        [data-baseweb="tab-list"] button[aria-selected="false"] {{
+            color: #9CA3AF !important;
+            border-bottom: 2px solid transparent !important;
         }}
         
-        /* Streamlit 탭 하단 인디케이터 라인 */
-        .stTabs [data-baseweb="tab-list"]::after,
-        [data-baseweb="tab-list"]::after {{
+        /* 탭 underline 2겹 문제 해결 */
+        /* tab-border: 탭 전체 아래 얇은 회색 구분선 */
+        .stTabs [data-baseweb="tab-border"] {{
+            background-color: #E5E7EB !important;
+            height: 1px !important;
+        }}
+        
+        /* tab-highlight: 선택된 탭 밑 굵은 강조 바 */
+        .stTabs [data-baseweb="tab-highlight"] {{
             background-color: {BRAND_COLORS['primary']} !important;
+            height: 3px !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
-
-def segmented_radio_style():
-    """라디오를 세그먼트 탭처럼 보이게 하는 스타일"""
-    st.markdown("""
-    <style>
-    /* 세그먼트 탭 스타일 - 라디오를 버튼처럼 보이게 */
-    div[data-testid="stRadio"] > div {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    
-    div[data-testid="stRadio"] > div > label {
-        background: #F5F7FA !important;
-        padding: 8px 20px !important;
-        border-radius: 999px !important;
-        border: 1px solid #E0E4EA !important;
-        cursor: pointer !important;
-        font-size: 14px !important;
-        color: #5B6472 !important;
-        font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-        transition: all 0.2s ease !important;
-        margin: 0 !important;
-        flex: 0 0 auto !important;
-    }
-    
-    div[data-testid="stRadio"] > div > label:hover {
-        background: #E5E7EB !important;
-        border-color: #D1D5DB !important;
-    }
-    
-    div[data-testid="stRadio"] > div > label[data-testid*="selected"] {
-        background: #1F5795 !important;
-        color: #FFFFFF !important;
-        border-color: #1F5795 !important;
-        font-weight: 600 !important;
-        font-family: 'Arita-Dotum-Bold', 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-    }
-    
-    div[data-testid="stRadio"] > div > label > div[data-baseweb="radio"] {
-        display: none !important;
-    }
-    
-    div[data-testid="stRadio"] > div > label > div:first-child {
-        display: none !important;
-    }
-    
-    div[data-testid="stRadio"] > div > label > span {
-        margin-left: 0 !important;
-    }
-    
-    /* 라디오 라벨 텍스트 스타일 */
-    div[data-testid="stRadio"] label {
-        text-align: center !important;
-    }
-    
-    /* 중분류 라벨 스타일 */
-    div[data-testid="stRadio"] > label {
-        font-size: 12px !important;
-        color: #6B7280 !important;
-        margin-bottom: 8px !important;
-        font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', sans-serif !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 def apply_custom_style():
     """전역 스타일 적용"""

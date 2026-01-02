@@ -19,6 +19,8 @@ BRAND_COLORS = {
 
 # 차트용 컬러 팔레트 
 CHART_PALETTE = [
+    "#DADDE3",  # 연한 회색 (기본 막대)
+    "#E3E6EC",  # 더 연한 회색
     "#9CA3AF",  # Gray (기본)
     "#6B7280",  # Gray (다크)
     "#D1D5DB",  # Gray (라이트)
@@ -100,9 +102,9 @@ def plot_usage_distribution(type_ratio, country, highlight_type=None):
     colors = []
     for idx, img_type in enumerate(type_ratio.index):
         if highlight_type and str(highlight_type) == str(img_type):
-            colors.append(BRAND_COLORS["primary"])
+            colors.append(BRAND_COLORS["primary"])  # primary 색상
         else:
-            colors.append(CHART_PALETTE[0])
+            colors.append(CHART_PALETTE[0])  # 연한 회색
     
     fig = px.bar(
         df_plot,
@@ -112,9 +114,13 @@ def plot_usage_distribution(type_ratio, country, highlight_type=None):
         title="이미지 타입별 활용 분포"
     )
     
-    fig.update_traces(marker_color=colors)
+    fig.update_traces(
+        marker_color=colors,
+        width=0.6  # 막대 폭 줄이기 (기본값보다 약 20-30% 얇게)
+    )
     fig = apply_chart_style(fig, highlight_type)
     fig.update_layout(
+        bargap=0.4,  # 막대 간격 조정 (0.35 ~ 0.45 범위)
         yaxis_tickformat=".0%",
         xaxis=dict(
             tickangle=0,
@@ -232,9 +238,9 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
         colors = []
         for idx, img_type in enumerate(usage_df.index):
             if highlight_type and str(highlight_type) == str(img_type):
-                colors.append(BRAND_COLORS["primary"])
+                colors.append(BRAND_COLORS["primary"])  # primary 색상
             else:
-                colors.append(CHART_PALETTE[0])
+                colors.append(CHART_PALETTE[0])  # 연한 회색
         
         fig1 = px.bar(
             df_usage,
@@ -243,9 +249,13 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
             labels={"Image Type": "이미지 타입", "Usage Share": "활용 비율"},
             title="활용 비율"
         )
-        fig1.update_traces(marker_color=colors)
+        fig1.update_traces(
+            marker_color=colors,
+            width=0.6  # 막대 폭 줄이기
+        )
         fig1 = apply_chart_style(fig1)
         fig1.update_layout(
+            bargap=0.4,  # 막대 간격 조정
             yaxis_tickformat=".0%",
             xaxis=dict(
                 tickangle=0,
@@ -270,9 +280,9 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
         colors = []
         for img_type in df_eng["img_type"]:
             if highlight_type and str(highlight_type) == str(img_type):
-                colors.append(BRAND_COLORS["primary"])
+                colors.append(BRAND_COLORS["primary"])  # primary 색상
             else:
-                colors.append(CHART_PALETTE[0])
+                colors.append(CHART_PALETTE[0])  # 연한 회색
         
         fig2 = px.bar(
             df_eng,
@@ -281,9 +291,13 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
             labels={"type_label": "이미지 타입", "eng_mean": "평균 참여율"},
             title="평균 참여율"
         )
-        fig2.update_traces(marker_color=colors)
+        fig2.update_traces(
+            marker_color=colors,
+            width=0.6  # 막대 폭 줄이기
+        )
         fig2 = apply_chart_style(fig2)
         fig2.update_layout(
+            bargap=0.4,  # 막대 간격 조정
             xaxis=dict(
                 tickangle=0,
                 title=dict(
