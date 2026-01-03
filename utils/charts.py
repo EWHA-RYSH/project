@@ -135,6 +135,7 @@ def plot_usage_distribution(type_ratio, country, highlight_type=None):
     fig.update_layout(
         bargap=0.4,  # 막대 간격 조정 (0.35 ~ 0.45 범위)
         showlegend=False,
+        height=400,  # 높이 명시적 설정
         yaxis_tickformat=".0%",
         yaxis=dict(title=None),
         margin=dict(l=40, r=20, t=40, b=40),
