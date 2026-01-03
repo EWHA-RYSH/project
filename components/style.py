@@ -226,17 +226,22 @@ def inject_style():
             padding: 15px;
             border: 1px solid #E5E7EB;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            overflow: hidden !important;
             max-width: 100% !important;
         }}
         
         .stPlotlyChart > div {{
-            overflow: hidden !important;
             max-width: 100% !important;
         }}
         
         .stPlotlyChart > div > div {{
-            overflow: hidden !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }}
+        
+        /* Plotly 차트 내부 요소는 overflow 제한하지 않음 */
+        .stPlotlyChart iframe,
+        .stPlotlyChart svg,
+        .stPlotlyChart .js-plotly-plot {{
             max-width: 100% !important;
             width: 100% !important;
         }}
@@ -305,19 +310,30 @@ def inject_style():
         }}
         
         .js-plotly-plot {{
-            overflow: hidden !important;
             max-width: 100% !important;
+            width: 100% !important;
+        }}
+        
+        /* Plotly SVG와 iframe은 overflow 제한하지 않음 */
+        .js-plotly-plot svg,
+        .js-plotly-plot iframe {{
+            max-width: 100% !important;
+            width: 100% !important;
         }}
         
         [data-testid="column"] {{
-            overflow: hidden !important;
             max-width: 100% !important;
         }}
         
         [data-testid="column"] > div {{
-            overflow: hidden !important;
             max-width: 100% !important;
             width: 100% !important;
+        }}
+        
+        /* Plotly 차트가 있는 컬럼은 overflow 제한하지 않음 */
+        [data-testid="column"] .stPlotlyChart,
+        [data-testid="column"] .js-plotly-plot {{
+            overflow: visible !important;
         }}
         
         .stMarkdown p, .stMarkdown div {{

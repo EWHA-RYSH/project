@@ -56,7 +56,7 @@ def get_country_name(code):
 
 def apply_chart_style(fig, highlight_type=None):
     """차트 공통 스타일 적용"""
-    # 기본 레이아웃 업데이트 (title은 건드리지 않음 - 각 차트에서 설정)
+    # 기본 레이아웃 업데이트 (title은 완전히 건드리지 않음)
     fig.update_layout(
         template=TEMPLATE,
         plot_bgcolor="white",
@@ -82,18 +82,6 @@ def apply_chart_style(fig, highlight_type=None):
             title=None
         )
     )
-    
-    # 기존 title이 있으면 스타일만 업데이트 (text는 유지)
-    if fig.layout.title and fig.layout.title.text:
-        existing_text = fig.layout.title.text
-        fig.update_layout(
-            title=dict(
-                text=existing_text,
-                x=0.5,
-                xanchor="center",
-                font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif")
-            )
-        )
     
     # 모드바 숨김
     fig.update_layout(modebar_remove=["zoom", "pan", "select", "lasso", "autoScale", "reset"])
@@ -150,6 +138,11 @@ def plot_usage_distribution(type_ratio, country, highlight_type=None):
         yaxis_tickformat=".0%",
         yaxis=dict(title=None),
         margin=dict(l=40, r=20, t=40, b=40),
+        title=dict(
+            x=0.5,
+            xanchor="center",
+            font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif")
+        ),
         xaxis=dict(
             tickangle=0,
             title=dict(
@@ -207,7 +200,12 @@ def plot_engagement_distribution(df_country, country, highlight_type=None):
         showlegend=False, 
         height=400,
         yaxis=dict(title=None),
-        margin=dict(l=40, r=20, t=40, b=40)
+        margin=dict(l=40, r=20, t=40, b=40),
+        title=dict(
+            x=0.5,
+            xanchor="center",
+            font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif")
+        )
     )
     
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
@@ -247,6 +245,11 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
             yaxis_tickformat=".0%",
             yaxis=dict(title=None),
             margin=dict(l=40, r=20, t=40, b=40),
+            title=dict(
+                x=0.5,
+                xanchor="center",
+                font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif")
+            ),
             xaxis=dict(
                 tickangle=0,
                 title=dict(
@@ -281,6 +284,11 @@ def plot_usage_vs_engagement(usage_df, perf_df, country, highlight_type=None):
             bargap=0.4,  # 막대 간격 조정
             yaxis=dict(title=None),
             margin=dict(l=40, r=20, t=40, b=40),
+            title=dict(
+                x=0.5,
+                xanchor="center",
+                font=dict(size=17, color="#111827", family="Arita-Dotum-Medium, Arita-dotum-Medium, sans-serif")
+            ),
             xaxis=dict(
                 tickangle=0,
                 title=dict(
