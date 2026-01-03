@@ -31,3 +31,4 @@ def load_tab_insights(tab_key: str) -> dict:
     except Exception:
         return {}
 
+
