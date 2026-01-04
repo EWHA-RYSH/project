@@ -234,27 +234,6 @@ def render():
             )
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False}, key=f"tab1_engagement_{selected_country}")
         
-        # 하단 상세 해석 (접기)
-        if performance_bullets:
-            structure_analysis = ""
-            for bullet in performance_bullets:
-                bullet_clean = bullet.strip()
-                if ("상위 콘텐츠" in bullet_clean or "성과 지표" in bullet_clean or "비선형" in bullet_clean or 
-                    "참여율과 반응 지표" in bullet_clean or "다수 콘텐츠의 누적" in bullet_clean):
-                    structure_analysis = bullet_clean
-                    break
-            
-            if structure_analysis:
-                with st.expander("상세 해석", expanded=False):
-                    st.markdown(
-                        f"""
-                        <div style="font-size: {FONT_SIZES['base']}; color: {TEXT_COLORS['primary']}; line-height: 1.6; font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Malgun Gothic', sans-serif !important;">
-                            {structure_analysis}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-        
         section_gap(48)
         
         # 좋아요/댓글 수 분포
@@ -404,28 +383,6 @@ def render():
                     )
                 )
                 st.plotly_chart(fig2, use_container_width=True, config={"displayModeBar": False}, key=f"tab1_comments_{selected_country}")
-        
-        # 하단 상세 해석 (접기)
-        if performance_bullets:
-            reaction_analysis = ""
-            for bullet in performance_bullets:
-                bullet_clean = bullet.strip()
-                if ("좋아요와 댓글" in bullet_clean or "확산형 반응" in bullet_clean or 
-                    "반응의 양과 질" in bullet_clean or "좋아요 중심" in bullet_clean or 
-                    "댓글 기여도" in bullet_clean):
-                    reaction_analysis = bullet_clean
-                    break
-            
-            if reaction_analysis:
-                with st.expander("상세 해석", expanded=False):
-                    st.markdown(
-                        f"""
-                        <div style="font-size: {FONT_SIZES['base']}; color: {TEXT_COLORS['primary']}; line-height: 1.6; font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Malgun Gothic', sans-serif !important;">
-                            {reaction_analysis}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
         
         section_gap(48)
         
@@ -758,6 +715,9 @@ def render():
                                     break
                             
                             content_html += f'<div style="margin-bottom: {margin_bottom};"><div style="font-size: {md_size}; font-weight: 700; color: {primary_color}; margin-bottom: {spacing_sm}; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">{icon} {title}</div><div style="font-size: {md_size}; font-weight: 400; color: {text_primary}; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">{content}</div></div>'
+                        else:
+                            # 콜론이 없는 경우 전체를 내용으로 표시
+                            content_html += f'<div style="margin-bottom: {margin_bottom};"><div style="font-size: {md_size}; font-weight: 400; color: {text_primary}; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">{bullet_text}</div></div>'
                 
                 if content_html:
                     try:
@@ -1280,13 +1240,13 @@ def render():
                 content_html = ""
                 
                 if status_text:
-                    content_html += '<div style="margin-bottom: ' + spacing_xl + ';"><div style="font-size: ' + md_size + '; font-weight: 700; color: ' + primary_color + '; margin-bottom: ' + spacing_sm + '; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">📈 활용 현황</div><div style="font-size: ' + md_size + '; font-weight: 400; color: ' + text_primary + '; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">' + status_text + '</div></div>'
+                    content_html += f'<div style="margin-bottom: {spacing_xl};"><div style="font-size: {md_size}; font-weight: 700; color: {primary_color}; margin-bottom: {spacing_sm}; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">📈 활용 현황</div><div style="font-size: {md_size}; font-weight: 400; color: {text_primary}; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">{status_text}</div></div>'
                 
                 if perf_text:
-                    content_html += '<div style="margin-bottom: ' + spacing_xl + ';"><div style="font-size: ' + md_size + '; font-weight: 700; color: ' + primary_color + '; margin-bottom: ' + spacing_sm + '; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">🏆 실제 성과</div><div style="font-size: ' + md_size + '; font-weight: 400; color: ' + text_primary + '; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">' + perf_text + '</div></div>'
+                    content_html += f'<div style="margin-bottom: {spacing_xl};"><div style="font-size: {md_size}; font-weight: 700; color: {primary_color}; margin-bottom: {spacing_sm}; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">🏆 실제 성과</div><div style="font-size: {md_size}; font-weight: 400; color: {text_primary}; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">{perf_text}</div></div>'
                 
                 if comp_text:
-                    content_html += '<div><div style="font-size: ' + md_size + '; font-weight: 700; color: ' + primary_color + '; margin-bottom: ' + spacing_sm + '; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">📍 비교 분석</div><div style="font-size: ' + md_size + '; font-weight: 400; color: ' + text_primary + '; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">' + comp_text + '</div></div>'
+                    content_html += f'<div><div style="font-size: {md_size}; font-weight: 700; color: {primary_color}; margin-bottom: {spacing_sm}; font-family: \'Arita-Dotum-Bold\', \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', sans-serif !important;">📍 비교 분석</div><div style="font-size: {md_size}; font-weight: 400; color: {text_primary}; line-height: 1.6; font-family: \'Arita-Dotum-Medium\', \'Arita-dotum-Medium\', \'Malgun Gothic\', sans-serif !important;">{comp_text}</div></div>'
                 
                 # st.html 사용 (패턴 요약과 동일한 방식)
                 if content_html:
