@@ -34,11 +34,44 @@ def render(df_ref):
     
     st.markdown("---")
     
-    # 컬럼 높이 맞추기를 위한 CSS
+    # 컬럼 높이 맞추기 및 이미지 크기 조정을 위한 CSS
     st.markdown("""
         <style>
+        /* 컬럼이 가로로 배치되도록 강제 - 배포 환경 대응 */
+        .stColumns {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 1rem !important;
+            width: 100% !important;
+        }
+        .stColumns > div {
+            display: flex !important;
+            flex-direction: column !important;
+            width: auto !important;
+            max-width: none !important;
+            flex-shrink: 1 !important;
+        }
+        /* 첫 번째 컬럼 (이미지 업로드) - 1:1.5 비율 */
+        .stColumns > div:first-child {
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+        }
+        /* 두 번째 컬럼 (결과 표시) - 1:1.5 비율 */
+        .stColumns > div:last-child {
+            flex: 1.5 1 0% !important;
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+        }
         .stColumn:first-child > div {
             min-height: 400px;
+        }
+        div[data-testid="stImage"] img {
+            width: 100% !important;
+            height: auto !important;
+            object-fit: contain !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -54,7 +87,8 @@ def render(df_ref):
         
         if uploaded:
             image = Image.open(uploaded).convert("RGB")
-            st.image(np.array(image), use_container_width=True)
+            # use_container_width는 배포 환경에서 지원되지 않을 수 있으므로 제거
+            st.image(np.array(image))
     
     with col2:
         if uploaded:
