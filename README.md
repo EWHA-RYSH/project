@@ -1,10 +1,10 @@
-# Impress.AI
+# AP.SIGNAL
 
 이미지 기반 콘텐츠 성과 인사이트 분석 플랫폼
 
 ## 📋 프로젝트 개요
 
-Impress.AI는 소셜 미디어 콘텐츠의 성과를 분석하고 예측하는 Streamlit 기반 웹 애플리케이션입니다. 
+AP.SIGNAL은 소셜 미디어 콘텐츠의 성과를 분석하고 예측하는 Streamlit 기반 웹 애플리케이션입니다. 
 7개 국가(싱가포르, 말레이시아, 태국, 인도네시아, 필리핀, 베트남, 일본)의 콘텐츠 데이터를 분석하여 
 이미지 타입별 활용도, 성과 패턴, 전략적 인사이트를 제공합니다.
 
@@ -24,7 +24,9 @@ project/
 │   ├─ data_loader.py       # 엑셀 로드, 전처리
 │   ├─ eda_metrics.py       # 국가별 집계, 상위 10%/30%, 안정성
 │   ├─ charts.py            # 공통 차트 함수 (Plotly)
-│   └─ insight_text.py      # 자동 인사이트 문구 생성
+│   ├─ insight_text.py      # 자동 인사이트 문구 생성
+│   ├─ insights_store.py    # JSON 인사이트 데이터 로드
+│   └─ metrics.py           # KPI 계산 함수
 │
 ├─ models/                  # ML 관련
 │   ├─ cv_model.py         # 모델 정의 및 로드
@@ -33,13 +35,27 @@ project/
 │   └─ country_encoder.pkl
 │
 ├─ components/              # UI/디자인
-│   ├─ layout.py           # 헤더, 섹션 타이틀
-│   └─ style.py            # CSS 한 번만 주입
+│   ├─ layout.py           # 헤더, 섹션 타이틀, 공통 컴포넌트
+│   ├─ style.py            # CSS 스타일 주입
+│   ├─ design_tokens.py    # 디자인 토큰 (색상, 폰트, 간격 등)
+│   └─ landing.py          # 랜딩 페이지
 │
 ├─ data/                    # 데이터 파일
 │   ├─ agent6_final_db.xlsx
-│   └─ agent6_final_reg_db.xlsx
+│   ├─ agent6_final_reg_db.xlsx
+│   └─ insights/           # JSON 인사이트 데이터
+│       ├─ tab1.json
+│       └─ tab2.json
 │
+├─ fonts/                   # 폰트 파일
+│   ├─ AritaDotumKR-*.ttf
+│   └─ AritaSansLTN-*.ttf
+│
+├─ assets/                  # 이미지 에셋
+│   └─ 1.jpg ~ 6.jpg       # 이미지 타입 가이드 이미지
+│
+├─ requirements.txt         # Python 의존성
+├─ runtime.txt             # Python 버전
 └─ README.md
 ```
 
@@ -128,6 +144,14 @@ project/
   - 자동 인사이트 문구 생성
   - 활용도, 성과, 고성과, 안정성, 전략 인사이트
 
+- **`insights_store.py`**: 
+  - JSON 형식의 사전 생성된 인사이트 데이터 로드
+  - 탭별 인사이트 관리
+
+- **`metrics.py`**: 
+  - KPI 계산 함수
+  - 활용도 및 성과 지표 계산
+
 #### `models/`
 - **`cv_model.py`**: 
   - MultiTaskModel 정의 (EfficientNet-B0 기반)
@@ -136,8 +160,10 @@ project/
   - 이미지 타입 설명 딕셔너리
 
 ### `components/`
-- **`layout.py`**: 헤더 컴포넌트
+- **`layout.py`**: 헤더, 섹션 타이틀, 공통 UI 컴포넌트
 - **`style.py`**: CSS 스타일 주입
+- **`design_tokens.py`**: 디자인 시스템 토큰 (색상, 폰트 크기, 간격, 테두리 등)
+- **`landing.py`**: 랜딩 페이지 컴포넌트
 
 
 ## 🌏 지원 국가
@@ -196,12 +222,14 @@ streamlit run app.py
 
 ## 📝 주요 의존성
 
-- `streamlit`: 웹 애플리케이션 프레임워크
-- `pandas`, `numpy`: 데이터 처리
-- `plotly`: 인터랙티브 차트
-- `torch`, `torchvision`: 딥러닝 모델
-- `scikit-learn`: 머신러닝 유틸리티
+- `streamlit==1.31.1`: 웹 애플리케이션 프레임워크
+- `pandas==2.1.4`, `numpy==1.26.4`: 데이터 처리
+- `plotly==5.18.0`: 인터랙티브 차트
+- `torch==2.2.2`, `torchvision==0.17.2`: 딥러닝 모델
+- `scikit-learn==1.4.2`: 머신러닝 유틸리티
 - `openpyxl`: 엑셀 파일 읽기
+- `pillow==10.2.0`: 이미지 처리
+- `streamlit-option-menu==0.3.13`: 옵션 메뉴 컴포넌트
 
 ## 🔄 데이터 흐름
 
@@ -257,5 +285,8 @@ streamlit run app.py
 
 - 데이터 파일은 `data/` 디렉토리에 위치해야 합니다.
 - 모델 파일은 `models/` 디렉토리에 위치해야 합니다.
+- 인사이트 JSON 파일은 `data/insights/` 디렉토리에 위치해야 합니다.
+- 폰트 파일은 `fonts/` 디렉토리에 위치해야 합니다.
 - 국가별 데이터가 없는 경우 경고 메시지가 표시됩니다.
 - 모든 차트는 Plotly 기반으로 인터랙티브합니다.
+- 디자인 시스템은 `components/design_tokens.py`에서 중앙 관리됩니다.
