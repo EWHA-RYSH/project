@@ -37,24 +37,29 @@ def render(df_ref):
     # 컬럼 레이아웃을 위한 CSS/JavaScript - 페이지 상단에 배치
     st.markdown("""
         <style>
-        .stColumns {
+        /* 컬럼 레이아웃 강제 */
+        .stColumns,
+        div[data-testid="column-container"] {
             display: flex !important;
             flex-direction: row !important;
             width: 100% !important;
             gap: 1rem !important;
         }
-        .stColumns > div {
+        .stColumns > div,
+        div[data-testid="column-container"] > div {
             display: flex !important;
             flex-direction: column !important;
             width: auto !important;
             max-width: none !important;
             flex-shrink: 1 !important;
         }
-        .stColumns > div:first-child {
+        .stColumns > div:first-child,
+        div[data-testid="column-container"] > div:first-child {
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
-        .stColumns > div:last-child {
+        .stColumns > div:last-child,
+        div[data-testid="column-container"] > div:last-child {
             flex: 1.5 1 0% !important;
             min-width: 0 !important;
         }
@@ -78,43 +83,44 @@ def render(df_ref):
             height: auto !important;
             object-fit: contain !important;
         }
+        /* 폰트 적용 */
+        [data-testid="column"] *,
+        .stColumns * {
+            font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Malgun Gothic', sans-serif !important;
+        }
         </style>
         <script>
         (function() {
-            function fixColumns() {
-                const cols = document.querySelectorAll('.stColumns');
-                cols.forEach(col => {
-                    if (col.style.display !== 'flex') {
-                        col.style.setProperty('display', 'flex', 'important');
-                        col.style.setProperty('flex-direction', 'row', 'important');
-                        col.style.setProperty('width', '100%', 'important');
-                        col.style.setProperty('gap', '1rem', 'important');
-                    }
-                    const divs = col.children;
-                    for (let i = 0; i < divs.length; i++) {
-                        const d = divs[i];
-                        d.style.setProperty('display', 'flex', 'important');
-                        d.style.setProperty('flex-direction', 'column', 'important');
-                        d.style.setProperty('width', 'auto', 'important');
-                        d.style.setProperty('max-width', 'none', 'important');
-                        d.style.setProperty('flex', i === 0 ? '1 1 0%' : '1.5 1 0%', 'important');
-                    }
+            function forceLayout() {
+                // 모든 컬럼 컨테이너 찾기
+                const selectors = ['.stColumns', '[data-testid="column-container"]'];
+                selectors.forEach(selector => {
+                    const containers = document.querySelectorAll(selector);
+                    containers.forEach(container => {
+                        container.style.cssText = 'display: flex !important; flex-direction: row !important; width: 100% !important; gap: 1rem !important;';
+                        const divs = Array.from(container.children);
+                        divs.forEach((d, i) => {
+                            d.style.cssText = 'display: flex !important; flex-direction: column !important; width: auto !important; max-width: none !important; flex: ' + (i === 0 ? '1 1 0%' : '1.5 1 0%') + ' !important;';
+                        });
+                    });
                 });
+                // 개별 컬럼 요소
                 const columnEls = document.querySelectorAll('[data-testid="column"]');
                 columnEls.forEach((el, i) => {
-                    el.style.setProperty('width', 'auto', 'important');
-                    el.style.setProperty('max-width', 'none', 'important');
-                    el.style.setProperty('flex', i === 0 ? '1 1 0%' : '1.5 1 0%', 'important');
+                    el.style.cssText = 'width: auto !important; max-width: none !important; flex: ' + (i === 0 ? '1 1 0%' : '1.5 1 0%') + ' !important;';
                 });
             }
+            // 즉시 실행
+            forceLayout();
+            // DOM 로드 후 실행
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', fixColumns);
-            } else {
-                fixColumns();
+                document.addEventListener('DOMContentLoaded', forceLayout);
             }
-            const observer = new MutationObserver(fixColumns);
-            observer.observe(document.body, { childList: true, subtree: true });
-            setInterval(fixColumns, 100);
+            // 변경 감지
+            const observer = new MutationObserver(forceLayout);
+            observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+            // 주기적 실행
+            setInterval(forceLayout, 50);
         })();
         </script>
     """, unsafe_allow_html=True)
@@ -129,68 +135,76 @@ def render(df_ref):
     if uploaded:
         image = Image.open(uploaded).convert("RGB")
         
-        col1, col2 = st.columns([1, 1.5])
+        # 예측 수행
+        img_tensor = transform(image).unsqueeze(0)
         
-        with col1:
-            st.image(np.array(image))
+        country_vec = country_encoder.transform(
+            pd.DataFrame([[selected_country]], columns=["country"])
+        )
+        country_vec = torch.tensor(country_vec, dtype=torch.float32)
         
-        with col2:
-            img_tensor = transform(image).unsqueeze(0)
-            
-            country_vec = country_encoder.transform(
-                pd.DataFrame([[selected_country]], columns=["country"])
-            )
-            country_vec = torch.tensor(country_vec, dtype=torch.float32)
-            
-            with torch.no_grad():
-                cls_out, reg_out = model(img_tensor, country_vec)
-            
-            img_type = int(torch.argmax(cls_out, dim=1).item()) + 1
-            pred_z = float(reg_out.item())
-            pred_logeng = pred_z * sigma + mu
-            percent = get_country_ecdf_percentile(df_ref, selected_country, pred_logeng)
-            
-            type_name = TYPE_DESC.get(img_type, f"Type {img_type}")
-            level, _ = performance_level(percent)
-            
-            # 예측 결과 카드 - 스타일을 변수로 먼저 할당
-            bg_color = '#DCFCE7' if percent >= 80 else '#FEF9C3' if percent >= 50 else '#FEE2E2'
-            text_color = '#166534' if percent >= 80 else '#854D0E' if percent >= 50 else '#991B1B'
-            
-            # 스타일 함수 호출을 변수로 할당
-            card_bg = get_bg_style('white')
-            card_border = get_border_style('default')
-            title_style = get_text_style('md', 'tertiary')
-            percent_style = get_text_style('5xl', 'primary', family='bold')
-            badge_style = get_text_style('sm', weight='semibold')
-            label_style = get_text_style('base', 'tertiary')
-            value_style = get_text_style('lg', 'primary', weight='semibold')
-            desc_style = get_text_style('base', 'tertiary')
-            
-            # 모든 내용을 하나의 HTML 블록으로 구성
-            result_html = (
-                f'<div style="{card_bg} {card_border} border-radius: {BORDER_RADIUS["lg"]}; '
-                f'padding: {SPACING["2xl"]}; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">'
-                f'<div style="{title_style} margin-bottom: {SPACING["sm"]};">예측 성과</div>'
-                f'<div style="{percent_style} margin-bottom: {SPACING["md"]};">{percent:.1f}%</div>'
-                f'<div style="display: inline-block; padding: {SPACING["xs"]} {SPACING["md"]}; '
-                f'border-radius: {BORDER_RADIUS["sm"]}; background-color: {bg_color}; '
-                f'color: {text_color}; {badge_style} margin-bottom: {SPACING["lg"]};">{level}</div>'
-                f'<div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING["lg"]}; '
-                f'margin-top: {SPACING["lg"]};">'
-                f'<div style="{label_style} margin-bottom: {SPACING["xs"]};">이미지 타입</div>'
-                f'<div style="{value_style} margin-bottom: {SPACING["lg"]};">Type {img_type} · {type_name}</div>'
-                f'<div style="{desc_style} line-height: 1.6;">'
-                f'이 이미지는 <strong>{selected_country}</strong> 시장 내 전체 콘텐츠 대비 '
-                f'<strong>{level}</strong> 수준의 상대적 성과 위치에 해당합니다.</div>'
-                f'</div></div>'
-            )
-            
-            # st.html을 먼저 시도하고, 없으면 st.markdown 사용
-            try:
-                st.html(result_html)
-            except (AttributeError, Exception):
-                st.markdown(result_html, unsafe_allow_html=True)
+        with torch.no_grad():
+            cls_out, reg_out = model(img_tensor, country_vec)
+        
+        img_type = int(torch.argmax(cls_out, dim=1).item()) + 1
+        pred_z = float(reg_out.item())
+        pred_logeng = pred_z * sigma + mu
+        percent = get_country_ecdf_percentile(df_ref, selected_country, pred_logeng)
+        
+        type_name = TYPE_DESC.get(img_type, f"Type {img_type}")
+        level, _ = performance_level(percent)
+        
+        # 이미지를 base64로 인코딩
+        import base64
+        from io import BytesIO
+        
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        # 예측 결과 카드 - 스타일을 변수로 먼저 할당
+        bg_color = '#DCFCE7' if percent >= 80 else '#FEF9C3' if percent >= 50 else '#FEE2E2'
+        text_color = '#166534' if percent >= 80 else '#854D0E' if percent >= 50 else '#991B1B'
+        
+        # 스타일 함수 호출을 변수로 할당
+        card_bg = get_bg_style('white')
+        card_border = get_border_style('default')
+        title_style = get_text_style('md', 'tertiary')
+        percent_style = get_text_style('5xl', 'primary', family='bold')
+        badge_style = get_text_style('sm', weight='semibold')
+        label_style = get_text_style('base', 'tertiary')
+        value_style = get_text_style('lg', 'primary', weight='semibold')
+        desc_style = get_text_style('base', 'tertiary')
+        
+        # 폰트 패밀리
+        font_family = "font-family: 'Arita-Dotum-Medium', 'Arita-dotum-Medium', 'Malgun Gothic', sans-serif !important;"
+        
+        # 이미지와 결과를 가로로 배치하는 HTML 레이아웃
+        layout_html = f"""
+        <div style="display: flex; flex-direction: row; gap: 1rem; width: 100%; align-items: flex-start;">
+            <div style="flex: 1 1 0%; min-width: 0;">
+                <img src="data:image/jpeg;base64,{img_str}" style="width: 100%; height: auto; object-fit: contain; border-radius: 8px;" />
+            </div>
+            <div style="flex: 1.5 1 0%; min-width: 0;">
+                <div style="{card_bg} {card_border} border-radius: {BORDER_RADIUS['lg']}; padding: {SPACING['2xl']}; box-shadow: 0 1px 2px rgba(0,0,0,0.05); {font_family}">
+                    <div style="{title_style} margin-bottom: {SPACING['sm']}; {font_family}">예측 성과</div>
+                    <div style="{percent_style} margin-bottom: {SPACING['md']}; {font_family}">{percent:.1f}%</div>
+                    <div style="display: inline-block; padding: {SPACING['xs']} {SPACING['md']}; border-radius: {BORDER_RADIUS['sm']}; background-color: {bg_color}; color: {text_color}; {badge_style} margin-bottom: {SPACING['lg']}; {font_family}">{level}</div>
+                    <div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING['lg']}; margin-top: {SPACING['lg']};">
+                        <div style="{label_style} margin-bottom: {SPACING['xs']}; {font_family}">이미지 타입</div>
+                        <div style="{value_style} margin-bottom: {SPACING['lg']}; {font_family}">Type {img_type} · {type_name}</div>
+                        <div style="{desc_style} line-height: 1.6; {font_family}">이 이미지는 <strong>{selected_country}</strong> 시장 내 전체 콘텐츠 대비 <strong>{level}</strong> 수준의 상대적 성과 위치에 해당합니다.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """
+        
+        # HTML 렌더링
+        try:
+            st.html(layout_html)
+        except (AttributeError, Exception):
+            st.markdown(layout_html, unsafe_allow_html=True)
     else:
         # 이미지가 없을 때 플레이스홀더
         st.markdown(f"""
