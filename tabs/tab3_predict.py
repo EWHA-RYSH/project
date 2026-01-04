@@ -163,10 +163,12 @@ def render(df_ref):
             """, unsafe_allow_html=True)
             
             # 예측 성과 제목
-            st.markdown(f'<div style="{get_text_style(\'md\', \'tertiary\')} margin-bottom: {SPACING[\'sm\']};">예측 성과</div>', unsafe_allow_html=True)
+            title_style = get_text_style('md', 'tertiary')
+            st.markdown(f'<div style="{title_style} margin-bottom: {SPACING["sm"]};">예측 성과</div>', unsafe_allow_html=True)
             
             # 퍼센트 표시
-            st.markdown(f'<div style="{get_text_style(\'5xl\', \'primary\', family=\'bold\')} margin-bottom: {SPACING[\'md\']};">{percent:.1f}%</div>', unsafe_allow_html=True)
+            percent_style = get_text_style('5xl', 'primary', family='bold')
+            st.markdown(f'<div style="{percent_style} margin-bottom: {SPACING["md"]};">{percent:.1f}%</div>', unsafe_allow_html=True)
             
             # 레벨 배지
             st.markdown(f"""
@@ -182,11 +184,13 @@ def render(df_ref):
             """, unsafe_allow_html=True)
             
             # 구분선
-            st.markdown(f'<div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING[\'lg\']}; margin-top: {SPACING[\'lg\']};"></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING["lg"]}; margin-top: {SPACING["lg"]};"></div>', unsafe_allow_html=True)
             
             # 이미지 타입
-            st.markdown(f'<div style="{get_text_style(\'base\', \'tertiary\')} margin-bottom: {SPACING[\'xs\']};">이미지 타입</div>', unsafe_allow_html=True)
-            st.markdown(f'<div style="{get_text_style(\'lg\', \'primary\', weight=\'semibold\')} margin-bottom: {SPACING[\'lg\']};">Type {img_type} · {type_name}</div>', unsafe_allow_html=True)
+            type_label_style = get_text_style('base', 'tertiary')
+            type_value_style = get_text_style('lg', 'primary', weight='semibold')
+            st.markdown(f'<div style="{type_label_style} margin-bottom: {SPACING["xs"]};">이미지 타입</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="{type_value_style} margin-bottom: {SPACING["lg"]};">Type {img_type} · {type_name}</div>', unsafe_allow_html=True)
             
             # 설명 텍스트
             st.markdown(f"""
