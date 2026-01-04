@@ -41,90 +41,94 @@ def render(df_ref):
         help="성과를 예측할 이미지를 업로드하세요"
     )
     
-    # 컬럼 레이아웃을 위한 CSS
-    st.markdown("""
-        <style>
-        /* 컬럼이 가로로 배치되도록 강제 */
-        .stColumns {
-            display: flex !important;
-            flex-direction: row !important;
-            width: 100% !important;
-            gap: 1rem !important;
-        }
-        .stColumns > div {
-            display: flex !important;
-            flex-direction: column !important;
-            width: auto !important;
-            max-width: none !important;
-            flex-shrink: 1 !important;
-        }
-        .stColumns > div:first-child {
-            flex: 1 1 0% !important;
-            min-width: 0 !important;
-        }
-        .stColumns > div:last-child {
-            flex: 1.5 1 0% !important;
-            min-width: 0 !important;
-        }
-        [data-testid="column"] {
-            width: auto !important;
-            max-width: none !important;
-            flex: 1 1 0% !important;
-        }
-        [data-testid="column"]:first-child {
-            flex: 1 1 0% !important;
-        }
-        [data-testid="column"]:last-child {
-            flex: 1.5 1 0% !important;
-        }
-        [data-testid="column"] > div {
-            width: auto !important;
-            max-width: none !important;
-        }
-        div[data-testid="stImage"] img {
-            width: 100% !important;
-            height: auto !important;
-            object-fit: contain !important;
-        }
-        </style>
-        <script>
-        function fixLayout() {
-            const cols = document.querySelectorAll('.stColumns');
-            cols.forEach(col => {
-                col.style.display = 'flex';
-                col.style.flexDirection = 'row';
-                const divs = col.querySelectorAll(':scope > div');
-                divs.forEach((d, i) => {
-                    d.style.width = 'auto';
-                    d.style.maxWidth = 'none';
-                    d.style.flex = i === 0 ? '1 1 0%' : '1.5 1 0%';
-                });
-            });
-            document.querySelectorAll('[data-testid="column"]').forEach((el, i) => {
-                el.style.width = 'auto';
-                el.style.maxWidth = 'none';
-                el.style.flex = i === 0 ? '1 1 0%' : '1.5 1 0%';
-            });
-        }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', fixLayout);
-        } else {
-            fixLayout();
-        }
-        new MutationObserver(fixLayout).observe(document.body, { childList: true, subtree: true });
-        setInterval(fixLayout, 300);
-        </script>
-    """, unsafe_allow_html=True)
-    
-    col1, col2 = st.columns([1, 1.5])
-    
-    with col1:
-        if uploaded:
-            image = Image.open(uploaded).convert("RGB")
+    if uploaded:
+        image = Image.open(uploaded).convert("RGB")
+        
+        # 컬럼 레이아웃을 위한 강력한 CSS
+        st.markdown("""
+            <style>
+            /* 컬럼이 가로로 배치되도록 강제 - 모든 선택자 사용 */
+            div[data-testid="column-container"],
+            .stColumns,
+            div[data-baseweb="block"] > div[data-testid="column-container"] {
+                display: flex !important;
+                flex-direction: row !important;
+                width: 100% !important;
+                gap: 1rem !important;
+            }
+            div[data-testid="column-container"] > div,
+            .stColumns > div,
+            div[data-baseweb="block"] > div[data-testid="column-container"] > div {
+                display: flex !important;
+                flex-direction: column !important;
+                width: auto !important;
+                max-width: none !important;
+                flex-shrink: 1 !important;
+            }
+            div[data-testid="column-container"] > div:first-child,
+            .stColumns > div:first-child {
+                flex: 1 1 0% !important;
+                min-width: 0 !important;
+            }
+            div[data-testid="column-container"] > div:last-child,
+            .stColumns > div:last-child {
+                flex: 1.5 1 0% !important;
+                min-width: 0 !important;
+            }
+            [data-testid="column"] {
+                width: auto !important;
+                max-width: none !important;
+                flex: 1 1 0% !important;
+            }
+            [data-testid="column"]:first-child {
+                flex: 1 1 0% !important;
+            }
+            [data-testid="column"]:last-child {
+                flex: 1.5 1 0% !important;
+            }
+            [data-testid="column"] > div {
+                width: auto !important;
+                max-width: none !important;
+            }
+            div[data-testid="stImage"] img {
+                width: 100% !important;
+                height: auto !important;
+                object-fit: contain !important;
+            }
+            </style>
+            <script>
+            (function() {
+                function forceLayout() {
+                    const containers = document.querySelectorAll('[data-testid="column-container"], .stColumns');
+                    containers.forEach(container => {
+                        container.style.cssText = 'display: flex !important; flex-direction: row !important; width: 100% !important; gap: 1rem !important;';
+                        const divs = container.querySelectorAll(':scope > div');
+                        divs.forEach((d, i) => {
+                            d.style.cssText = 'display: flex !important; flex-direction: column !important; width: auto !important; max-width: none !important; flex: ' + (i === 0 ? '1 1 0%' : '1.5 1 0%') + ' !important;';
+                        });
+                    });
+                    document.querySelectorAll('[data-testid="column"]').forEach((el, i) => {
+                        el.style.cssText = 'width: auto !important; max-width: none !important; flex: ' + (i === 0 ? '1 1 0%' : '1.5 1 0%') + ' !important;';
+                    });
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', forceLayout);
+                } else {
+                    forceLayout();
+                }
+                const obs = new MutationObserver(forceLayout);
+                obs.observe(document.body, { childList: true, subtree: true });
+                setInterval(forceLayout, 200);
+            })();
+            </script>
+        """, unsafe_allow_html=True)
+        
+        col1, col2 = st.columns([1, 1.5])
+        
+        with col1:
             st.image(np.array(image))
-    
-    with col2:
-        if uploaded:
+        
+        with col2:
             img_tensor = transform(image).unsqueeze(0)
             
             country_vec = country_encoder.transform(
@@ -143,42 +147,60 @@ def render(df_ref):
             type_name = TYPE_DESC.get(img_type, f"Type {img_type}")
             level, _ = performance_level(percent)
             
-            # 예측 결과 카드 HTML
+            # 예측 결과 카드 - Streamlit 네이티브 컴포넌트 사용
             bg_color = '#DCFCE7' if percent >= 80 else '#FEF9C3' if percent >= 50 else '#FEE2E2'
             text_color = '#166534' if percent >= 80 else '#854D0E' if percent >= 50 else '#991B1B'
             
-            result_html = f"""
-            <div style="{get_bg_style('white')} {get_border_style('default')} border-radius: {BORDER_RADIUS['lg']}; padding: {SPACING['2xl']}; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                <div style="{get_text_style('md', 'tertiary')} margin-bottom: {SPACING['sm']};">
-                    예측 성과
-                </div>
-                <div style="{get_text_style('5xl', 'primary', family='bold')} margin-bottom: {SPACING['md']};">
-                    {percent:.1f}%
-                </div>
-                <div style="display: inline-block; padding: {SPACING['xs']} {SPACING['md']}; border-radius: {BORDER_RADIUS['sm']}; background-color: {bg_color}; color: {text_color}; {get_text_style('sm', weight='semibold')} margin-bottom: {SPACING['lg']};">
-                    {level}
-                </div>
-                
-                <div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING['lg']}; margin-top: {SPACING['lg']};">
-                    <div style="{get_text_style('base', 'tertiary')} margin-bottom: {SPACING['xs']};">
-                        이미지 타입
-                    </div>
-                    <div style="{get_text_style('lg', 'primary', weight='semibold')} margin-bottom: {SPACING['lg']};">
-                        Type {img_type} · {type_name}
-                    </div>
-                    
-                    <div style="{get_text_style('base', 'tertiary')} line-height: 1.6;">
-                        이 이미지는 <strong>{selected_country}</strong> 시장 내 전체 콘텐츠 대비 
-                        <strong>{level}</strong> 수준의 상대적 성과 위치에 해당합니다.
-                    </div>
-                </div>
-            </div>
-            """
+            # 카드 컨테이너
+            st.markdown(f"""
+                <div style="
+                    {get_bg_style('white')} 
+                    {get_border_style('default')} 
+                    border-radius: {BORDER_RADIUS['lg']}; 
+                    padding: {SPACING['2xl']}; 
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+                ">
+            """, unsafe_allow_html=True)
             
-            # st.markdown으로 HTML 렌더링 (배포 환경 호환성)
-            st.markdown(result_html, unsafe_allow_html=True)
-        else:
-            placeholder_html = f"""
+            # 예측 성과 제목
+            st.markdown(f'<div style="{get_text_style(\'md\', \'tertiary\')} margin-bottom: {SPACING[\'sm\']};">예측 성과</div>', unsafe_allow_html=True)
+            
+            # 퍼센트 표시
+            st.markdown(f'<div style="{get_text_style(\'5xl\', \'primary\', family=\'bold\')} margin-bottom: {SPACING[\'md\']};">{percent:.1f}%</div>', unsafe_allow_html=True)
+            
+            # 레벨 배지
+            st.markdown(f"""
+                <div style="
+                    display: inline-block; 
+                    padding: {SPACING['xs']} {SPACING['md']}; 
+                    border-radius: {BORDER_RADIUS['sm']}; 
+                    background-color: {bg_color}; 
+                    color: {text_color}; 
+                    {get_text_style('sm', weight='semibold')} 
+                    margin-bottom: {SPACING['lg']};
+                ">{level}</div>
+            """, unsafe_allow_html=True)
+            
+            # 구분선
+            st.markdown(f'<div style="border-top: 1px solid #E5E7EB; padding-top: {SPACING[\'lg\']}; margin-top: {SPACING[\'lg\']};"></div>', unsafe_allow_html=True)
+            
+            # 이미지 타입
+            st.markdown(f'<div style="{get_text_style(\'base\', \'tertiary\')} margin-bottom: {SPACING[\'xs\']};">이미지 타입</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="{get_text_style(\'lg\', \'primary\', weight=\'semibold\')} margin-bottom: {SPACING[\'lg\']};">Type {img_type} · {type_name}</div>', unsafe_allow_html=True)
+            
+            # 설명 텍스트
+            st.markdown(f"""
+                <div style="{get_text_style('base', 'tertiary')} line-height: 1.6;">
+                    이 이미지는 <strong>{selected_country}</strong> 시장 내 전체 콘텐츠 대비 
+                    <strong>{level}</strong> 수준의 상대적 성과 위치에 해당합니다.
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # 카드 닫기
+            st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        # 이미지가 없을 때 플레이스홀더
+        st.markdown(f"""
             <div style="
                 background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
                 border: 1px solid #BAE6FD;
@@ -199,7 +221,4 @@ def render(df_ref):
                     이미지를 업로드하면 콘텐츠 성과 예측 결과가 표시됩니다.
                 </div>
             </div>
-            """
-            
-            # st.markdown으로 HTML 렌더링 (배포 환경 호환성)
-            st.markdown(placeholder_html, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
