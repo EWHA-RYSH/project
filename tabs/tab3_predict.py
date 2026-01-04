@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import torch
+import numpy as np
 from PIL import Image
 
 from models.cv_model import load_model_bundle, get_image_transform, TYPE_DESC
@@ -53,7 +54,7 @@ def render(df_ref):
         
         if uploaded:
             image = Image.open(uploaded).convert("RGB")
-            st.image(image, use_container_width=True)
+            st.image(np.array(image), use_container_width=True)
     
     with col2:
         if uploaded:

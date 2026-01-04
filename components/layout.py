@@ -62,7 +62,7 @@ def render_kpi_card(label, value, subtext=None, highlight=False):
     subtext_html = f'<div class="kpi-subtext" style="{get_text_style("sm", "muted")} margin-top: auto; padding-top: {SPACING["sm"]};">{subtext}</div>' if subtext else ''
     
     st.markdown(
-        f'<div class="kpi-card-wrapper" style="{get_bg_style("white")} {get_border_style("default")} border-radius: {BORDER_RADIUS["md"]}; padding: {SPACING["xl"]}; box-shadow: 0 1px 2px rgba(0,0,0,0.05); {highlight_style} width: 100%; box-sizing: border-box; min-height: 140px; display: flex; flex-direction: column; overflow: visible;"><div style="flex: 1;"><div class="kpi-label" style="{get_text_style("base", "tertiary")} margin-bottom: {SPACING["sm"]};">{label}</div><div class="kpi-value" style="{get_text_style("xl", "primary", family="bold")}">{value}</div></div>{subtext_html}</div>',
+        f'<div class="kpi-card-wrapper" style="{get_bg_style("white")} {get_border_style("default")} border-radius: {BORDER_RADIUS["md"]}; padding: {SPACING["xl"]}; box-shadow: 0 1px 2px rgba(0,0,0,0.05); {highlight_style} width: 100%; box-sizing: border-box; height: 100%; min-height: 140px; display: flex; flex-direction: column; overflow: visible;"><div style="flex: 1;"><div class="kpi-label" style="{get_text_style("base", "tertiary")} margin-bottom: {SPACING["sm"]};">{label}</div><div class="kpi-value" style="{get_text_style("xl", "primary", family="bold")}">{value}</div></div>{subtext_html}</div>',
         unsafe_allow_html=True
     )
 

@@ -82,6 +82,22 @@ def render():
     
     kpis = compute_performance_kpis(df_country)
     
+    # 컬럼 정렬을 위해 스타일 추가
+    st.markdown(
+        """
+        <style>
+        [data-testid="column"] {
+            display: flex;
+            flex-direction: column;
+        }
+        .kpi-card-wrapper {
+            flex: 1;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
